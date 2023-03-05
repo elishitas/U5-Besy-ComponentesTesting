@@ -1,19 +1,21 @@
 //metodos necesarios de negocios
 package com.besy.bcsb.servicios.interfaces;
 
-import com.besy.bcsb.dominio.PeliculaSerie;
+import com.besy.bcsb.dto.request.PeliculaSerieRequestDto;
+import com.besy.bcsb.dto.response.PeliculaSerieResponseDto;
+import com.besy.bcsb.dto.FechasDto;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public interface IPeliculaSerieService {
 
-    List<PeliculaSerie> buscarPorParametros(String titulo, String nombreGenero);
+    List<PeliculaSerieResponseDto> buscarPorParametros(String titulo, String nombreGenero);
 
-    List<PeliculaSerie> buscarPorCalificaciones(Byte desde, Byte hasta);
-    List<PeliculaSerie> buscarPorFechas(String desde, String hasta);
+    List<PeliculaSerieResponseDto> buscarPorCalificaciones(Byte desde, Byte hasta);
+
+    List<PeliculaSerieResponseDto> buscarPorFechas(FechasDto fechasDto);
 
 
-    PeliculaSerie crear(PeliculaSerie peliculaSerie);
-    PeliculaSerie actualizar(Long id, PeliculaSerie peliculaSerie);
+    PeliculaSerieResponseDto crear(PeliculaSerieRequestDto dto);
+    PeliculaSerieResponseDto actualizar(Long id, PeliculaSerieRequestDto dto);
 }

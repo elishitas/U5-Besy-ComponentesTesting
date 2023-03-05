@@ -2,18 +2,23 @@ package com.besy.bcsb.servicios.implementacionesMemoria;
 
 import com.besy.bcsb.dominio.Genero;
 import com.besy.bcsb.dominio.PeliculaSerie;
+import com.besy.bcsb.dto.mapper.IPeliculaSerieMapper;
+import com.besy.bcsb.dto.request.PeliculaSerieRequestDto;
+import com.besy.bcsb.dto.response.PeliculaSerieResponseDto;
 import com.besy.bcsb.repositorios.memory.interfaces.IPeliculaSerieRepository;
+import com.besy.bcsb.dto.FechasDto;
 import com.besy.bcsb.servicios.interfaces.IGeneroService;
 import com.besy.bcsb.servicios.interfaces.IPeliculaSerieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @ConditionalOnProperty (prefix = "app", name = "type-data", havingValue = "memory")
@@ -21,8 +26,12 @@ public class PeliculaSerieServiceMemoriaImpl implements IPeliculaSerieService {
 
     @Autowired
     IGeneroService generoService;
+
     @Autowired
     IPeliculaSerieRepository peliculaSerieRepository;
+
+    @Autowired
+    IPeliculaSerieMapper peliculaSerieMapper;
 
     public PeliculaSerieServiceMemoriaImpl(IGeneroService generoService,
                                            IPeliculaSerieRepository peliculaSerieRepository) {
@@ -30,39 +39,50 @@ public class PeliculaSerieServiceMemoriaImpl implements IPeliculaSerieService {
         this.peliculaSerieRepository = peliculaSerieRepository;
     }
 
+
     @Override
-    public List<PeliculaSerie> buscarPorParametros(String titulo, String nombreGenero) {
-        return this.peliculaSerieRepository.buscarPorParamatros(titulo, nombreGenero);
+    @Transactional(readOnly = true)
+    public List<PeliculaSerieResponseDto> buscarPorParametros(String titulo, String nombreGenero) {
+        List<PeliculaSerie> peliculas = this.peliculaSerieRepository.buscarPorParamatros(titulo, nombreGenero);
+        List<PeliculaSerieResponseDto> peliculasResponseDto = new ArrayList<>();
+        //for (PeliculaSerie pelicula : peliculas) {
+        //    peliculasResponseDto.add(this.peliculaSerieMapper.mapToDto(pelicula));
+        //}
+        return peliculasResponseDto;
     }
 
     @Override
-    public List<PeliculaSerie> buscarPorCalificaciones(Byte desde, Byte hasta) {
-
+    public List<PeliculaSerieResponseDto> buscarPorCalificaciones(Byte desde, Byte hasta) {
         if (desde == null || hasta == null || desde < 1 || hasta > 5 || desde > hasta) {
             throw new IllegalArgumentException("Parámetros de búsqueda no válidos");
         }
-        return this.peliculaSerieRepository.buscarPorCalificaciones(desde, hasta);
+        //List<PeliculaSerie> peliculas = this.peliculaSerieRepository.buscarPorCalificaciones(desde, hasta);
+        return Collections.emptyList();
+        //return peliculas.stream().map(this.peliculaSerieMapper::mapToDto).collect(Collectors.toList());
     }
 
     @Override
-    public List<PeliculaSerie> buscarPorFechas(String desde, String hasta) {
+    public List<PeliculaSerieResponseDto> buscarPorFechas(FechasDto fechasDto) {
         try {
-            LocalDate fechaInicio = LocalDate.parse(desde, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-            LocalDate fechaFinal = LocalDate.parse(hasta, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+            LocalDate fechaInicio = LocalDate.parse(fechasDto.getDesde(), DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+            LocalDate fechaFinal = LocalDate.parse(fechasDto.getHasta(), DateTimeFormatter.ofPattern("dd-MM-yyyy"));
             if (fechaInicio.isAfter(fechaFinal)) {
                 throw new IllegalArgumentException("Rango de fecha inválido.");
             }
             if (fechaInicio.isAfter(LocalDate.now()) || fechaFinal.isAfter(LocalDate.now())) {
                 throw new IllegalArgumentException("La fecha no puede ser del futuro.");
             }
-            return this.peliculaSerieRepository.buscarPorFechas(fechaInicio, fechaFinal);
+            List<PeliculaSerie> peliculas = this.peliculaSerieRepository.buscarPorFechas(fechaInicio, fechaFinal);
+            //return Collections.emptyList();
+            return peliculas.stream().map(peliculaSerieMapper::mapToDto).collect(Collectors.toList());
         } catch (DateTimeParseException e) {
             throw new IllegalArgumentException("Formato de fecha inválido.");
         }
     }
-
     @Override
-    public PeliculaSerie crear(PeliculaSerie peliculaSerie) {
+    public PeliculaSerieResponseDto crear(PeliculaSerieRequestDto dto) {
+        PeliculaSerie peliculaSerie = peliculaSerieMapper.mapToEntity(dto);
+
         if (peliculaSerie == null) {
             throw new IllegalArgumentException("La película/serie no puede ser nula.");
         }
@@ -81,14 +101,18 @@ public class PeliculaSerieServiceMemoriaImpl implements IPeliculaSerieService {
             throw new IllegalArgumentException("No existe género con ese nombre.");
         }
         peliculaSerie.setGenero(optionalGenero.get());
-        return this.peliculaSerieRepository.guardar(peliculaSerie);
+
+        peliculaSerie = this.peliculaSerieRepository.guardar(peliculaSerie);
+        return peliculaSerieMapper.mapToDto(peliculaSerie);
     }
 
     @Override
-    public PeliculaSerie actualizar(Long id, PeliculaSerie peliculaSerie) {
+    public PeliculaSerieResponseDto actualizar(Long id, PeliculaSerieRequestDto dto) {
         if (id == null || id < 1) {
             throw new IllegalArgumentException("El ID no puede ser nulo o menor a 1.");
         }
+
+        PeliculaSerie peliculaSerie = peliculaSerieMapper.mapToEntity(dto);
 
         if (peliculaSerie == null) {
             throw new IllegalArgumentException("La película/serie no puede ser nula.");
@@ -112,6 +136,7 @@ public class PeliculaSerieServiceMemoriaImpl implements IPeliculaSerieService {
         peliculaSerie.setGenero(genero);
         peliculaSerie.setId(id);
 
-        return this.peliculaSerieRepository.editar(id, peliculaSerie);
+        peliculaSerie = this.peliculaSerieRepository.editar(id, peliculaSerie);
+        return peliculaSerieMapper.mapToDto(peliculaSerie);
     }
 }

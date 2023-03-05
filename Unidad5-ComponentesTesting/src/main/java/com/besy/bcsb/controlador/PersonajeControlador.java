@@ -1,6 +1,5 @@
 package com.besy.bcsb.controlador;
 
-import com.besy.bcsb.dominio.PeliculaSerie;
 import com.besy.bcsb.dominio.Personaje;
 import com.besy.bcsb.servicios.interfaces.IPersonajeService;
 import com.besy.bcsb.utilidades.DatosUtilidad;
@@ -71,7 +70,8 @@ public class PersonajeControlador {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Personaje personaje) {
+    public ResponseEntity<?> actualizar(@PathVariable Long id,
+                                        @RequestBody Personaje personaje) {
         try {
             return ResponseEntity.ok(this.personajeService.actualizar(id, personaje));
         } catch (IllegalArgumentException ex){

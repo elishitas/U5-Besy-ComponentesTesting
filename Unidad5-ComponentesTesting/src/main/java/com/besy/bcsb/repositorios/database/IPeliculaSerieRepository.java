@@ -10,11 +10,11 @@ import java.util.Optional;
 
 public interface IPeliculaSerieRepository extends JpaRepository<PeliculaSerie, Integer> {
     @Query("select ps from PeliculaSerie ps where ps.titulo=?1")
-    Optional<PeliculaSerie> findByTitle(String titulo);
+    Optional<PeliculaSerie> findByTitulo(String titulo);
 
     @Query("select ps from PeliculaSerie ps where ps.fechaDeCreacion>=?1 and ps.fechaDeCreacion<=?2")
-    Iterable<PeliculaSerie> findBetweenDates(LocalDate desde, LocalDate hasta);
+    Iterable<PeliculaSerie> findBetweenFechas(LocalDate desde, LocalDate hasta);
 
     @Query("select ps from PeliculaSerie ps where ps.calificacion>=?1 and ps.calificacion<=?2")
-    Iterable<PeliculaSerie> findBetweenCalif(byte desde, byte hasta);
+    Iterable<PeliculaSerie> findBetweenCalifacion(byte desde, byte hasta);
 }

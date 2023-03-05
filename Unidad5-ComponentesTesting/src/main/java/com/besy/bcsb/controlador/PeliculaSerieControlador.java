@@ -1,9 +1,10 @@
 package com.besy.bcsb.controlador;
 
-import com.besy.bcsb.dominio.Genero;
 import com.besy.bcsb.dominio.PeliculaSerie;
+import com.besy.bcsb.dto.FechasDto;
+import com.besy.bcsb.dto.request.PeliculaSerieRequestDto;
+import com.besy.bcsb.dto.response.PeliculaSerieResponseDto;
 import com.besy.bcsb.servicios.interfaces.IPeliculaSerieService;
-import com.besy.bcsb.utilidades.DatosUtilidad;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class PeliculaSerieControlador {
 
     //http://localhost:9080/peliculas-series/
     @GetMapping()
-    public ResponseEntity<List<PeliculaSerie>> buscarPorParametros(
+    public ResponseEntity<List<PeliculaSerieResponseDto>> buscarPorParametros(
             @RequestParam(required = false) String titulo,
             @RequestParam(required = false) String nombreGenero) {
 
@@ -59,15 +60,12 @@ public class PeliculaSerieControlador {
     //2
     //http://localhost:9080/peliculas-series/fechas?desde=31-03-2016&hasta=31-03-2022
     @GetMapping("/fechas")
-    public ResponseEntity<?> buscarPorFechas(@RequestParam String desde,
-                                             @RequestParam String hasta) {
-
+    public ResponseEntity<?> buscarPorFechas(@ModelAttribute FechasDto fechasDto) {
         try {
-            return ResponseEntity.ok(this.peliculaSerieService.buscarPorFechas(desde, hasta));
+            return ResponseEntity.ok(this.peliculaSerieService.buscarPorFechas(fechasDto));
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
-
     }
 
      //4
@@ -85,11 +83,12 @@ public class PeliculaSerieControlador {
 }
     */
     @PostMapping
-    public ResponseEntity<?> crear(@RequestBody PeliculaSerie peliculaSerie){
-
+    public ResponseEntity<?> crear(@RequestBody PeliculaSerieRequestDto dto) {
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(this.peliculaSerieService.crear(peliculaSerie));
-        } catch (IllegalArgumentException ex){
+            PeliculaSerie peliculaSerie = peliculaSerieMapper.mapToEntity(dto);
+            PeliculaSerieResponseDto responseDto = peliculaSerieMapper.mapToDto(peliculaSerieService.crear(peliculaSerie));
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+        } catch (IllegalArgumentException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
     }

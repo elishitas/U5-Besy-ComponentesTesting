@@ -1,4 +1,4 @@
-package com.besy.bcsb.utilidades;
+package com.besy.bcsb.datos;
 
 import com.besy.bcsb.dominio.Genero;
 import com.besy.bcsb.dominio.PeliculaSerie;

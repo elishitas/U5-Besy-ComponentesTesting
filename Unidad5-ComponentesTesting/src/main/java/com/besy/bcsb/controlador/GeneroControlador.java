@@ -1,8 +1,6 @@
 
 package com.besy.bcsb.controlador;
 
-import com.besy.bcsb.dominio.Genero;
-import com.besy.bcsb.dominio.PeliculaSerie;
 import com.besy.bcsb.dto.request.GeneroRequestDto;
 import com.besy.bcsb.dto.response.GeneroResponseDto;
 import com.besy.bcsb.servicios.interfaces.IGeneroService;
