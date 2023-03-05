@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
 @Data
 public class GeneroRequestDto {
     
-    @Size(message = "El nombre no puede ser mayor a 30 carácteres.", max = 30)
-    @NotBlank(message = "El nombre no puede ser nulo o vacío.")
+    @Size(message = "El nombre no puede ser mayor a 20 carácteres.", max = 20)
+    @NotBlank(message = "El nombre no puede ser vacío.")
     private String nombre;
 }

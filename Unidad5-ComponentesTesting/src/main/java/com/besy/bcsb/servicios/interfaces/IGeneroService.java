@@ -4,6 +4,7 @@ package com.besy.bcsb.servicios.interfaces;
 import com.besy.bcsb.dominio.Genero;
 import com.besy.bcsb.dto.request.GeneroRequestDto;
 import com.besy.bcsb.dto.response.GeneroResponseDto;
+import org.mapstruct.Mapper;
 
 
 import java.util.List;

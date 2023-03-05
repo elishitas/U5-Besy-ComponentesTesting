@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -69,7 +70,6 @@ public class PeliculaSerieServiceImpl implements IPeliculaSerieService {
 
     /*
     se realizan las siguientes validaciones en Crear:
-
         Si la película/serie es nula
         Si el título de la película/serie es nulo o vacío
         Si la película/serie ya existe

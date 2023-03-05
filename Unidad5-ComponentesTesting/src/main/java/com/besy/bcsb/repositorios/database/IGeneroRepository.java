@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface IGeneroRepository extends JpaRepository<Genero, Integer> {
     @Query("select g from Genero g where g.nombre=?1")
-    Optional<Genero> findByName(String nombre);
+    Optional<Genero> buscarPorNombre(String nombre);
 }

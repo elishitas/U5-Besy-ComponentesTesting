@@ -13,17 +13,17 @@ public class Genero implements Serializable {
     @Column(name = "ID")
     private Long Id;
 
-    @Column(length = 30, name = "NOMBRE", nullable = false, unique = true)
+    @Column(length = 30, nullable = false, unique = true)
     private String nombre;
 
-    public Genero() {
+    public Genero(String nombre) {
+        this.nombre = nombre;
     }
 
     public Genero(Long Id, String nombre) {
         this.Id = Id;
         this.nombre = nombre;
     }
-
 
     public Long getId() {
         return Id;
