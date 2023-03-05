@@ -3,6 +3,8 @@ package com.besy.bcsb.controlador;
 
 import com.besy.bcsb.dominio.Genero;
 import com.besy.bcsb.dominio.PeliculaSerie;
+import com.besy.bcsb.dto.request.GeneroRequestDto;
+import com.besy.bcsb.dto.response.GeneroResponseDto;
 import com.besy.bcsb.servicios.interfaces.IGeneroService;
 import com.besy.bcsb.utilidades.DatosUtilidad;
 import org.springframework.http.HttpStatus;
@@ -22,37 +24,29 @@ public class GeneroControlador {
         this.generoService = generoService;
     }
 
-    //http://localhost:9080/generos
+    // http://localhost:9080/generos
     @GetMapping
-    ResponseEntity<List<Genero>> obtenerTodos() {
-        return ResponseEntity.ok(this.generoService.obtenerTodos());
+    ResponseEntity<List<GeneroResponseDto>> obtenerTodos() {
+        List<GeneroResponseDto> generos = this.generoService.obtenerTodos();
+        return ResponseEntity.ok(generos);
     }
 
+    // {
+    //   "nombre": "Comedia"
+    // }
     @PostMapping
-    public ResponseEntity<?> crearGenero(@RequestBody Genero genero) {
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(this.generoService.crearGeneros(genero));
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
-        }
+    public ResponseEntity<?> crearGenero(@RequestBody GeneroRequestDto generoDto) {
+        GeneroResponseDto nuevoGenero = this.generoService.crearGeneros(generoDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoGenero);
     }
 
-    /*
-     {
-            "nombre": "Comediana",
-        }
-    */
+    // {
+    //   "nombre": "Comedia"
+    // }
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizarGenero(@PathVariable Long id,
-                                              @RequestBody Genero genero) {
-
-        Genero resultado = this.generoService.actualizarGenero(id, genero);
-        if (resultado != null) {
-            return ResponseEntity.ok(resultado);
-        } else {
-            throw new RuntimeException("No se pudo actualizar el genero.");
-        }
+                                              @RequestBody GeneroRequestDto generoDto) {
+        GeneroResponseDto generoActualizado = this.generoService.actualizarGenero(id, generoDto);
+        return ResponseEntity.ok(generoActualizado);
     }
-
-
 }

@@ -2,18 +2,20 @@
 package com.besy.bcsb.servicios.interfaces;
 
 import com.besy.bcsb.dominio.Genero;
-import org.springframework.http.ResponseEntity;
+import com.besy.bcsb.dto.request.GeneroRequestDto;
+import com.besy.bcsb.dto.response.GeneroResponseDto;
+
 
 import java.util.List;
 import java.util.Optional;
 
 public interface IGeneroService {
 
-    List<Genero> obtenerTodos();
+    List<GeneroResponseDto> obtenerTodos();
 
-    Genero crearGeneros(Genero genero);
+    GeneroResponseDto crearGeneros(GeneroRequestDto dto);
 
-    Genero actualizarGenero(Long id, Genero genero);
+    GeneroResponseDto actualizarGenero(Long id, GeneroRequestDto dto);
 
     Optional<Genero> buscarPorNombre(String nombre);
 
